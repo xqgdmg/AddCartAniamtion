@@ -27,9 +27,33 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        mRl = (RelativeLayout) findViewById(R.id.rl);
-        mRv = (RecyclerView) findViewById(R.id.rv);
-        mCart = (ImageView) findViewById(R.id.cart);
+        initView();
+        simulateData();
+        setRecycleView();
+    }
+
+    private void setRecycleView() {
+        CommonAdapter<Integer> mAdapter = new CommonAdapter<Integer>(this, R.layout.item, mList) {
+            @Override
+            protected void convert(final ViewHolder holder, Integer integer, int position) {
+                holder.setImageResource(R.id.iv, integer);
+                final ImageView imageView = holder.getView(R.id.iv);
+                TextView tvBuy = holder.getView(R.id.buy);
+
+                tvBuy.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        //  起点就是执行动画的控件
+                        AddCartAnimation.AddToCart(imageView, mCart, MainActivity.this, mRl, 1);
+                    }
+                });
+            }
+        };
+        mRv.setLayoutManager(new LinearLayoutManager(this));
+        mRv.setAdapter(mAdapter);
+    }
+
+    private void simulateData() {
         mList = new ArrayList<>();
         mList.add(R.mipmap.icon1);
         mList.add(R.mipmap.icon2);
@@ -43,21 +67,11 @@ public class MainActivity extends AppCompatActivity {
         mList.add(R.mipmap.icon1);
         mList.add(R.mipmap.icon2);
         mList.add(R.mipmap.icon3);
-        CommonAdapter<Integer> mAdapter = new CommonAdapter<Integer>(this, R.layout.item, mList) {
-            @Override
-            protected void convert(final ViewHolder holder, Integer integer, int position) {
-                holder.setImageResource(R.id.iv,integer);
-                final ImageView imageView = holder.getView(R.id.iv);
-                TextView view = holder.getView(R.id.buy);
-                view.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        AddCartAnimation.AddToCart(imageView,mCart,MainActivity.this,mRl,1);
-                    }
-                });
-            }
-        };
-        mRv.setLayoutManager(new LinearLayoutManager(this));
-        mRv.setAdapter(mAdapter);
+    }
+
+    private void initView() {
+        mRl = (RelativeLayout) findViewById(R.id.rl);
+        mRv = (RecyclerView) findViewById(R.id.rv);
+        mCart = (ImageView) findViewById(R.id.cart);
     }
 }
